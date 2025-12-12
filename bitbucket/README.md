@@ -11,7 +11,7 @@ These pipelines make outbound connections to:
 | `github.com` | OpenHands SDK installation |
 | `raw.githubusercontent.com` | syft/grype installer scripts |
 | `toolbox-data.anchore.io` | grype vulnerability database |
-| LLM API endpoint | Configurable via `LLM_BASE_URL` (e.g., `bedrock-runtime.*.amazonaws.com`) |
+| LLM API endpoint | Configurable via `LLM_BASE_URL` (e.g., `bedrock-runtime.*.amazonaws.com` or `llm-proxy.app.all-hands.dev` for OpenHands Cloud) |
 
 ## Included Pipelines
 
@@ -83,6 +83,33 @@ For automated runs:
    - Branch: `main`
    - Pipeline: `custom: cve-scanner` (recommended weekly)
    - Schedule: Your preferred time
+
+---
+
+## Using OpenHands Cloud Credits
+
+If you have an [OpenHands Cloud](https://app.all-hands.dev) account, you can use your OpenHands credits to run these demos instead of providing your own LLM API key.
+
+### Configuration
+
+Set the following repository variables:
+
+| Variable | Value |
+|----------|-------|
+| `LLM_API_KEY` | Your OpenHands API key (copy from [OpenHands Cloud Settings → API Keys](https://app.all-hands.dev/settings/api-keys)) |
+| `LLM_BASE_URL` | `https://llm-proxy.app.all-hands.dev` |
+| `LLM_MODEL` | Any model from the [supported models list](https://docs.all-hands.dev/usage/llms/openhands-llms) (e.g., `openhands/claude-sonnet-4`) |
+
+### Example
+
+```bash
+export LLM_API_KEY="your-openhands-api-key"
+export LLM_BASE_URL="https://llm-proxy.app.all-hands.dev"
+export LLM_MODEL="openhands/claude-sonnet-4"
+python scripts/sbom_report.py
+```
+
+> **Network Note:** If using OpenHands Cloud, ensure the `all-hands.dev` domain is allowed in your network/firewall settings. The pipeline will need outbound access to `llm-proxy.app.all-hands.dev`.
 
 ---
 
