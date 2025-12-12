@@ -1,0 +1,169 @@
+# =============================================================================
+# OpenHands Demo Pipelines
+# =============================================================================
+# This file contains demo pipelines showcasing OpenHands SDK capabilities:
+#
+# 1. AI Readiness Report - Scores repository's AI-readiness
+# 2. SBOM Report - Generates Software Bill of Materials with security analysis
+# 3. CVE Scanner - Scans for CVEs, auto-applies fixes, and generates report
+#
+# SETUP:
+#   1. Add repository variables in Bitbucket:
+#      Settings → Repository variables
+#      - LLM_API_KEY (secured): Your LLM provider API key
+#      - LLM_MODEL: e.g., "anthropic/claude-sonnet-4-5-20250929" (optional)
+#      - LLM_BASE_URL: Custom API endpoint (optional)
+#
+#   2. To schedule runs:
+#      Settings → Pipelines → Schedules → Add schedule
+#      - Branch: main
+#      - Pipeline: custom: cve-scanner (recommended weekly)
+#      - Schedule: Weekly at your preferred time
+#
+# =============================================================================
+
+image: python:3.12
+
+definitions:
+  steps:
+    - step: &ai-readiness-report
+        name: Generate AI Readiness Report
+        caches:
+          - pip
+        script:
+          - pip install uv
+
+          # Install OpenHands SDK
+          - uv pip install --system "openhands-sdk @ git+https://github.com/OpenHands/software-agent-sdk.git#subdirectory=openhands-sdk"
+          - uv pip install --system "openhands-tools @ git+https://github.com/OpenHands/software-agent-sdk.git#subdirectory=openhands-tools"
+
+          # Validate required variables
+          - |
+            if [ -z "$LLM_API_KEY" ]; then
+              echo "Error: LLM_API_KEY repository variable is not set."
+              echo "Go to Repository Settings → Repository variables to add it."
+              exit 1
+            fi
+
+          # Run the AI readiness report script
+          - python scripts/ai_readiness_report.py
+
+          # Configure git for commits
+          - git config user.name "OpenHands"
+          - git config user.email "openhands@all-hands.dev"
+
+          # Commit and push the report if there are changes
+          - |
+            if [ -n "$(git status --porcelain)" ]; then
+              git add reports/
+              git commit -m "chore: update AI readiness report"
+              git pull --rebase origin main && git push origin HEAD
+            else
+              echo "No changes to commit"
+            fi
+        artifacts:
+          - reports/**
+          - "*.log"
+
+    - step: &sbom-report
+        name: Generate SBOM Report
+        caches:
+          - pip
+        script:
+          - pip install uv
+
+          # Install OpenHands SDK
+          - uv pip install --system "openhands-sdk @ git+https://github.com/OpenHands/software-agent-sdk.git#subdirectory=openhands-sdk"
+          - uv pip install --system "openhands-tools @ git+https://github.com/OpenHands/software-agent-sdk.git#subdirectory=openhands-tools"
+
+          # Install curl for syft installation
+          - apt-get update && apt-get install -y curl
+
+          # Validate required variables
+          - |
+            if [ -z "$LLM_API_KEY" ]; then
+              echo "Error: LLM_API_KEY repository variable is not set."
+              echo "Go to Repository Settings → Repository variables to add it."
+              exit 1
+            fi
+
+          # Run the SBOM report script
+          - python scripts/sbom_report.py
+
+          # Configure git for commits
+          - git config user.name "OpenHands"
+          - git config user.email "openhands@all-hands.dev"
+
+          # Commit and push the report if there are changes
+          - |
+            if [ -n "$(git status --porcelain)" ]; then
+              git add reports/
+              git commit -m "chore: update SBOM report"
+              git pull --rebase origin main && git push origin HEAD
+            else
+              echo "No changes to commit"
+            fi
+        artifacts:
+          - reports/**
+          - "*.log"
+
+    - step: &cve-scanner
+        name: CVE Scanner & Auto-Fix
+        caches:
+          - pip
+        script:
+          - pip install uv
+
+          # Install OpenHands SDK
+          - uv pip install --system "openhands-sdk @ git+https://github.com/OpenHands/software-agent-sdk.git#subdirectory=openhands-sdk"
+          - uv pip install --system "openhands-tools @ git+https://github.com/OpenHands/software-agent-sdk.git#subdirectory=openhands-tools"
+
+          # Install curl for grype installation and Node.js for npm
+          - apt-get update && apt-get install -y curl nodejs npm
+
+          # Validate required variables
+          - |
+            if [ -z "$LLM_API_KEY" ]; then
+              echo "Error: LLM_API_KEY repository variable is not set."
+              echo "Go to Repository Settings → Repository variables to add it."
+              exit 1
+            fi
+
+          # Run the CVE scanner - analyzes vulnerabilities, applies fixes, generates report
+          - python scripts/cve_report.py
+
+          # Configure git for commits
+          - git config user.name "OpenHands"
+          - git config user.email "openhands@all-hands.dev"
+
+          # Commit and push all changes (report + package fixes)
+          - |
+            if [ -n "$(git status --porcelain)" ]; then
+              git add -A
+              git commit -m "fix: apply CVE security patches
+
+            Automated security fixes applied by OpenHands CVE scanner.
+            See reports/cve-*.md for details."
+              git pull --rebase origin main && git push origin HEAD
+            else
+              echo "No CVE fixes needed"
+            fi
+        artifacts:
+          - reports/**
+          - "*.log"
+
+pipelines:
+  # Manual trigger or scheduled runs use these custom pipelines
+  custom:
+    ai-readiness-report:
+      - step: *ai-readiness-report
+    sbom-report:
+      - step: *sbom-report
+    cve-scanner:
+      - step: *cve-scanner
+
+  # Optionally run on push to main (comment out if you only want scheduled runs)
+  # branches:
+  #   main:
+  #     - step: *ai-readiness-report
+  #     - step: *cve-scanner  # Weekly CVE scan recommended
