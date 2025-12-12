@@ -98,14 +98,14 @@ Set the following repository variables:
 |----------|-------|
 | `LLM_API_KEY` | Your OpenHands API key (copy from [OpenHands Cloud Settings → API Keys](https://app.all-hands.dev/settings/api-keys)) |
 | `LLM_BASE_URL` | `https://llm-proxy.app.all-hands.dev` |
-| `LLM_MODEL` | Any model from the [supported models list](https://docs.all-hands.dev/usage/llms/openhands-llms) (e.g., `openhands/claude-sonnet-4`) |
+| `LLM_MODEL` | Any model from the [supported models list](https://docs.all-hands.dev/usage/llms/openhands-llms) (e.g., `openhands/claude-sonnet-4-20250514`) |
 
 ### Example
 
 ```bash
 export LLM_API_KEY="your-openhands-api-key"
 export LLM_BASE_URL="https://llm-proxy.app.all-hands.dev"
-export LLM_MODEL="openhands/claude-sonnet-4"
+export LLM_MODEL="openhands/claude-sonnet-4-20250514"
 python scripts/sbom_report.py
 ```
 
