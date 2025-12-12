@@ -48,7 +48,7 @@ Go to **Repository Settings → Repository variables** and add these variables:
 |----------|----------|---------|-------------|
 | `LLM_API_KEY` | Yes | **Yes** | Your LLM provider API key (e.g., Anthropic API key) |
 | `LLM_MODEL` | No | No | Model to use. Default: `anthropic/claude-sonnet-4-5-20250929` |
-| `LLM_BASE_URL` | No | No | Custom LLM API endpoint (e.g., `https://bedrock-runtime.us-east-1.amazonaws.com` for AWS Bedrock) |
+| `LLM_BASE_URL` | No | No | Custom LLM API endpoint (e.g., `https://bedrock-runtime.us-east-1.amazonaws.com` for AWS Bedrock). Not required when using the `openhands/` provider—the SDK auto-configures this. |
 
 ### 2. Copy Files to Your Repository
 
