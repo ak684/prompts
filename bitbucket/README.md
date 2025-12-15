@@ -32,7 +32,7 @@ These pipelines make outbound connections to:
 ## Prerequisites
 
 - A Bitbucket repository with **Pipelines enabled** (Repository Settings → Pipelines → Enable Pipelines)
-- An LLM API key (e.g., from [Anthropic](https://console.anthropic.com/))
+- An LLM API key from an LLM provider (e.g., from [OpenHands](https://docs.openhands.dev/openhands/usage/cloud/cloud-api#obtaining-an-api-key))
 
 > **Note:** The pipeline is fully self-contained. It uses a Python 3.12 Docker image and automatically installs the OpenHands SDK and all required tools (syft, grype) at runtime. No local setup required.
 
@@ -47,7 +47,7 @@ Go to **Repository Settings → Repository variables** and add these variables:
 | Variable | Required | Secured | Description |
 |----------|----------|---------|-------------|
 | `LLM_API_KEY` | Yes | **Yes** | Your LLM provider API key (e.g., Anthropic API key) |
-| `LLM_MODEL` | No | No | Model to use. Default: `anthropic/claude-sonnet-4-5-20250929` |
+| `LLM_MODEL` | No | No | Model to use. (e.g. `claude-sonnet-4-5-20250929` )|
 | `LLM_BASE_URL` | No | No | Custom LLM API endpoint (e.g., `https://bedrock-runtime.us-east-1.amazonaws.com` for AWS Bedrock). Not required when using the `openhands/` provider—the SDK auto-configures this. |
 
 ### 2. Copy Files to Your Repository
