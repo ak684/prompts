@@ -6,6 +6,8 @@ The following examples are for GitHub but can also work in GitLab.
 
 Best for: Teams who want a no-code, managed solution out of the box
 
+<img width="600" alt="Screenshot 2025-12-19 at 12 52 09 PM" src="https://github.com/user-attachments/assets/f62f66fa-3e16-4147-8711-27b221cee18e" />
+
 1. Sign up at https://app.all-hands.dev with GitHub
 2. Install the GitHub App
    - Click **+ Add GitHub Repos** → select repos to authorize → **Install & Authorize**
@@ -14,11 +16,6 @@ Best for: Teams who want a no-code, managed solution out of the box
    - The PR must be to AND from an authorized repo
 
 Documentation: https://docs.openhands.dev/openhands/usage/cloud/github-installation
-
-
-**Example**
-<img width="852" height="955" alt="Screenshot 2025-12-19 at 12 52 09 PM" src="https://github.com/user-attachments/assets/f62f66fa-3e16-4147-8711-27b221cee18e" />
-
 
 **Approach 2: SDK GitHub Workflow** (requires an LLM API key)
 
